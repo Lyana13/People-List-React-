@@ -2,6 +2,7 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
+import {Container, Row, Col} from "react-bootstrap";
 
 export default class PeopleList extends React.Component {
 
@@ -22,7 +23,6 @@ export default class PeopleList extends React.Component {
     axios.get('https://venbest-test.herokuapp.com/')
       .then(res => {
         const people = res.data;
-        console.log("ss", people);
         this.setState({ people });
       })
   }
@@ -36,37 +36,68 @@ export default class PeopleList extends React.Component {
     });
   }
 
+  convertSex(gender) {
+    if (gender == "m")
+      return "мужской";
+    else if (gender == "f")
+      return "женский";
+    else
+      return "";
+  }
+
   render() {
     return (
       <React.Fragment>
-        <label>
-          Имя:
-          <input type="text" name="name" value={this.state.name} onChange={this.handleChange} />
-          </label>
-          <label>
-          Фамилия:
-          <input type="text" name="surname" value={this.state.surname} onChange={this.handleChange} />
-          </label>
-          <label>
-          Возраст:
-          <input type="number" name="age" value={this.state.age} onChange={this.handleChange} />
-          </label>
-          <label>
-            Пол:
-            female<input type="checkbox" name="female" checked={this.state.female} onChange={this.handleChange} />
-            male<input type="checkbox" name="male" checked={this.state.male} onChange={this.handleChange} />
-        </label>
-        <ul>
+        <Container>
+          <Row>
+            <Col>
+              <label>
+                Имя:
+              </label>
+                <input type="text" name="name" value={this.state.name} onChange={this.handleChange} />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <label>
+                Фамилия:
+              </label>
+                <input type="text" name="surname" value={this.state.surname} onChange={this.handleChange} />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <label>
+              Возраст: 
+              </label>
+              <input type="number" name="age" value={this.state.age} onChange={this.handleChange} />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <label>
+                Пол:
+              </label>
+                <input type="checkbox" name="male" checked={this.state.male} onChange={this.handleChange} />м
+                <input type="checkbox" name="female" checked={this.state.female} onChange={this.handleChange}/>ж    
+            </Col>
+          </Row>
           {
             this.state.people
             .filter(person => person.name.search(this.state.name) != -1 && person.lastname.search(this.state.surname) != -1)
             .filter(person => (this.state.female && person.sex == "f") || (this.state.male && person.sex == "m"))
             .filter(person => !this.state.age || person.age == this.state.age)
             .map((person, index) =>
-              <li key={index}>{person.name} {person.lastname} {person.age} {person.sex}</li>
+              <div key={index}>
+                <hr/>
+                <p>{person.name} {person.lastname}</p>
+                <p>Возраст: {person.age}</p>
+                <p>Пол: {this.convertSex(person.sex)}</p>
+              </div>
             )
           }
-        </ul>
+          <hr />
+        </Container>
       </React.Fragment>
     )
   }
